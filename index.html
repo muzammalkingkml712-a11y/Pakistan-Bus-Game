@@ -15,140 +15,199 @@
          MAIN MENU
     ========================== -->
 
-    <div id="menu" class="screen">
+    <div id="mainMenu" class="screen">
 
-        <h1>🇵🇰 Pakistan Bus Game</h1>
+        <div class="menu-overlay">
 
-        <p class="subtitle">
-            Drive through the roads of Pakistan
-        </p>
+            <div class="logo">
+                🇵🇰
+                <span>PAKISTAN</span>
+                <b>BUS GAME</b>
+            </div>
 
-        <h2>Select City</h2>
+            <p class="subtitle">
+                Drive Pakistan • Explore Cities • Complete Routes
+            </p>
 
-        <select id="citySelect">
-            <option value="Lahore">Lahore</option>
-            <option value="Karachi">Karachi</option>
-            <option value="Islamabad">Islamabad</option>
-            <option value="Rawalpindi">Rawalpindi</option>
-            <option value="Faisalabad">Faisalabad</option>
-            <option value="Multan">Multan</option>
-            <option value="Peshawar">Peshawar</option>
-            <option value="Quetta">Quetta</option>
-            <option value="Gujranwala">Gujranwala</option>
-            <option value="Sialkot">Sialkot</option>
-        </select>
-
-        <h2>Select Bus</h2>
-
-        <div class="bus-selection">
-
-            <button class="bus-btn" onclick="selectBus('Daewoo')">
-                🚌 Daewoo
+            <button onclick="startGame()">
+                🚌 PLAY GAME
             </button>
 
-            <button class="bus-btn" onclick="selectBus('Green Bus')">
-                🚌 Green Bus
+            <button onclick="openCityMenu()">
+                🗺️ MAP
             </button>
 
-            <button class="bus-btn" onclick="selectBus('Local Bus')">
-                🚌 Local Bus
+            <button onclick="showComingSoon('Bus Garage')">
+                🚍 BUS GARAGE
+            </button>
+
+            <button onclick="showComingSoon('Career Mode')">
+                🏆 CAREER
+            </button>
+
+            <button onclick="showComingSoon('Tour Mode')">
+                🌍 TOUR
             </button>
 
         </div>
-
-        <p id="selectedBus">
-            Selected Bus: None
-        </p>
-
-        <button class="start-btn" onclick="startGame()">
-            START GAME
-        </button>
 
     </div>
 
 
     <!-- =========================
-         GAME SCREEN
+         CITY MENU
     ========================== -->
 
-    <div id="game" class="screen hidden">
+    <div id="cityMenu" class="screen hidden">
 
-        <div class="top-bar">
+        <div class="city-panel">
+
+            <h1>🇵🇰 PAKISTAN MAP</h1>
+
+            <p>Select your city</p>
+
+            <div id="cityList"></div>
+
+            <button class="back-button" onclick="backToMenu()">
+                ⬅ BACK
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         GAME
+    ========================== -->
+
+    <div id="gameUI" class="hidden">
+
+        <div id="threeContainer"></div>
+
+
+        <!-- TOP HUD -->
+
+        <div class="top-hud">
 
             <div>
-                🏙️ City:
-                <span id="cityName">Lahore</span>
+                📍
+                <span id="currentCity">
+                    Kamalia
+                </span>
             </div>
 
             <div>
-                🚌 Bus:
-                <span id="busName">Bus</span>
+                💰 Rs.
+                <span id="money">
+                    5000
+                </span>
             </div>
 
             <div>
-                ⭐ Score:
-                <span id="score">0</span>
-            </div>
-
-            <div>
-                👥 Passengers:
-                <span id="passengers">0</span>
+                ⛽
+                <span id="fuel">
+                    100
+                </span>%
             </div>
 
         </div>
 
 
-        <!-- ROAD -->
+        <!-- SPEED -->
 
-        <div id="road">
+        <div class="speedometer">
 
-            <div class="road-line line1"></div>
-            <div class="road-line line2"></div>
-            <div class="road-line line3"></div>
-            <div class="road-line line4"></div>
+            <span id="speed">
+                0
+            </span>
 
-            <!-- Traffic -->
-
-            <div class="traffic traffic1">🚗</div>
-            <div class="traffic traffic2">🚙</div>
-
-            <!-- PLAYER BUS -->
-
-            <div id="playerBus">
-                🚌
-            </div>
+            <small>
+                KM/H
+            </small>
 
         </div>
 
 
-        <!-- CONTROLS -->
+        <!-- ROUTE -->
+
+        <div class="route-box">
+
+            📍
+
+            <span id="destination">
+                Kamalia City
+            </span>
+
+        </div>
+
+
+        <!-- MOBILE CONTROLS -->
 
         <div class="controls">
 
-            <button onclick="moveLeft()">
-                ◀ LEFT
-            </button>
+            <div class="left-controls">
 
-            <button onclick="stopBus()">
-                ⛔ BRAKE
-            </button>
+                <button
+                    id="leftBtn"
+                    class="control-btn"
+                >
+                    ◀
+                </button>
 
-            <button onclick="moveRight()">
-                RIGHT ▶
-            </button>
+                <button
+                    id="rightBtn"
+                    class="control-btn"
+                >
+                    ▶
+                </button>
+
+            </div>
+
+
+            <div class="right-controls">
+
+                <button
+                    id="brakeBtn"
+                    class="control-btn brake"
+                >
+                    🛑
+                </button>
+
+                <button
+                    id="gasBtn"
+                    class="control-btn gas"
+                >
+                    🚀
+                </button>
+
+                <button
+                    id="hornBtn"
+                    class="control-btn"
+                >
+                    📯
+                </button>
+
+            </div>
 
         </div>
 
-        <p class="keyboard">
-            Keyboard: ← → to move | Space to brake
-        </p>
 
-        <button class="back-btn" onclick="backToMenu()">
-            Back to Menu
+        <!-- EXIT -->
+
+        <button
+            class="exit-game"
+            onclick="exitGame()"
+        >
+            ✕
         </button>
 
     </div>
 
+
+    <!-- THREE.JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
 
     <script src="game.js"></script>
 
