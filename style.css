@@ -1,1 +1,345 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: Arial, sans-serif;
+    background: #050505;
+    color: white;
+    overflow: hidden;
+}
+
+
+/* =========================
+   COMMON SCREEN
+========================= */
+
+.screen {
+    width: 100vw;
+    height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================
+   MAIN MENU
+========================= */
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at center, #182018 0%, #050505 60%);
+
+    text-align: center;
+}
+
+#menu h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 20px #00ff88;
+}
+
+.subtitle {
+    color: #aaa;
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+#menu h2 {
+    margin: 10px;
+    color: #00ff88;
+}
+
+#citySelect {
+    width: 280px;
+    padding: 14px;
+    background: #111;
+    color: white;
+    border: 2px solid #00ff88;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+
+/* =========================
+   BUS BUTTONS
+========================= */
+
+.bus-selection {
+    display: flex;
+    gap: 12px;
+    margin: 15px;
+}
+
+.bus-btn {
+    padding: 14px 20px;
+    background: #151515;
+    color: white;
+    border: 2px solid #444;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.bus-btn:hover {
+    border-color: #00ff88;
+    transform: scale(1.05);
+}
+
+.bus-btn.selected {
+    border-color: #00ff88;
+    background: #12351f;
+}
+
+#selectedBus {
+    margin: 15px;
+    color: #00ff88;
+}
+
+
+.start-btn {
+    margin-top: 25px;
+    padding: 16px 50px;
+
+    background: #00c853;
+    color: white;
+
+    border: none;
+    border-radius: 12px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 0 20px #00c853;
+}
+
+.start-btn:hover {
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   GAME SCREEN
+========================= */
+
+#game {
+    background: #111;
+}
+
+
+/* =========================
+   TOP BAR
+========================= */
+
+.top-bar {
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    background: #050505;
+
+    border-bottom: 2px solid #00ff88;
+
+    font-weight: bold;
+}
+
+
+/* =========================
+   ROAD
+========================= */
+
+#road {
+    position: relative;
+
+    width: 520px;
+    height: calc(100vh - 170px);
+
+    margin: auto;
+
+    background: #333;
+
+    border-left: 12px solid #555;
+    border-right: 12px solid #555;
+
+    overflow: hidden;
+}
+
+
+/* Road lines */
+
+.road-line {
+    position: absolute;
+
+    width: 8px;
+    height: 90px;
+
+    background: white;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    animation: roadMove 0.7s linear infinite;
+}
+
+.line1 {
+    top: -100px;
+}
+
+.line2 {
+    top: 120px;
+}
+
+.line3 {
+    top: 340px;
+}
+
+.line4 {
+    top: 560px;
+}
+
+@keyframes roadMove {
+
+    from {
+        transform: translate(-50%, -100px);
+    }
+
+    to {
+        transform: translate(-50%, 800px);
+    }
+
+}
+
+
+/* =========================
+   PLAYER BUS
+========================= */
+
+#playerBus {
+    position: absolute;
+
+    bottom: 50px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 75px;
+
+    transition: left 0.15s ease;
+
+    z-index: 5;
+
+    filter: drop-shadow(0 0 10px black);
+}
+
+
+/* =========================
+   TRAFFIC
+========================= */
+
+.traffic {
+    position: absolute;
+
+    font-size: 55px;
+
+    z-index: 3;
+}
+
+.traffic1 {
+    top: -100px;
+    left: 80px;
+
+    animation: trafficMove 4s linear infinite;
+}
+
+.traffic2 {
+    top: -300px;
+    right: 80px;
+
+    animation: trafficMove 5s linear infinite;
+}
+
+@keyframes trafficMove {
+
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(900px);
+    }
+
+}
+
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls {
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+}
+
+.controls button {
+    padding: 10px 20px;
+
+    background: #151515;
+    color: white;
+
+    border: 1px solid #00ff88;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.controls button:hover {
+    background: #00ff88;
+    color: black;
+}
+
+.keyboard {
+    position: absolute;
+
+    bottom: 8px;
+    left: 20px;
+
+    color: #888;
+    font-size: 13px;
+}
+
+.back-btn {
+    position: absolute;
+
+    right: 20px;
+    bottom: 8px;
+
+    padding: 8px 15px;
+
+    background: #222;
+    color: white;
+
+    border: 1px solid #555;
+    border-radius: 7px;
+
+    cursor: pointer;
+}
