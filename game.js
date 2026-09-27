@@ -1,1347 +1,1309 @@
-/* =========================================================
+/* =====================================================
    PAKISTAN BUS GAME
-   Cities → Areas → Villages/Chaks → Famous Places
-========================================================= */
-
-let player = JSON.parse(localStorage.getItem("pakBusPlayer")) || {
-    money: 5000,
-    xp: 0,
-    level: 1,
-    fuel: 100,
-    downloadedMaps: ["Lahore"]
-};
-
-let currentMode = "";
-let currentCity = "";
-let currentArea = "";
-let currentDestination = "";
+   3D BUS SIMULATOR PROTOTYPE
+===================================================== */
 
 
-/* =========================================================
-   CITY DATA
-========================================================= */
+/* =========================
+   GAME DATA
+========================= */
 
 const cities = [
-
-    {
-        name: "Lahore",
-        emoji: "🏙️",
-        price: 1000,
-        mapSize: "250 MB",
-
-        areas: [
-            "Lahore City",
-            "DHA",
-            "Gulberg",
-            "Model Town",
-            "Johar Town",
-            "Shahdara"
-        ],
-
-        villages: [
-            "Barki",
-            "Bedian",
-            "Raiwind",
-            "Kahna",
-            "Kot Abdul Malik"
-        ],
-
-        places: [
-            "Minar-e-Pakistan",
-            "Badshahi Mosque",
-            "Lahore Fort",
-            "Liberty Market",
-            "Lahore Railway Station"
-        ]
-    },
-
-    {
-        name: "Karachi",
-        emoji: "🌊",
-        price: 1500,
-        mapSize: "300 MB",
-
-        areas: [
-            "Karachi City",
-            "Clifton",
-            "Gulshan",
-            "North Nazimabad",
-            "Korangi",
-            "Saddar"
-        ],
-
-        villages: [
-            "Gadap",
-            "Malir",
-            "Goth Khando",
-            "Memon Goth",
-            "Darsano Channa"
-        ],
-
-        places: [
-            "Mazar-e-Quaid",
-            "Clifton Beach",
-            "Sea View",
-            "Saddar",
-            "Port Grand"
-        ]
-    },
-
-    {
-        name: "Islamabad",
-        emoji: "🏛️",
-        price: 1200,
-        mapSize: "220 MB",
-
-        areas: [
-            "Islamabad City",
-            "F-6",
-            "F-7",
-            "F-8",
-            "G-9",
-            "I-8"
-        ],
-
-        villages: [
-            "Saidpur",
-            "Bara Kahu",
-            "Nilore",
-            "Tarlai",
-            "Sihala"
-        ],
-
-        places: [
-            "Faisal Mosque",
-            "Pakistan Monument",
-            "Daman-e-Koh",
-            "Rawal Lake",
-            "Margalla Hills"
-        ]
-    },
-
-    {
-        name: "Rawalpindi",
-        emoji: "🏙️",
-        price: 1100,
-        mapSize: "210 MB",
-
-        areas: [
-            "Rawalpindi City",
-            "Saddar",
-            "Murree Road",
-            "Satellite Town",
-            "Chaklala",
-            "Peshawar Road"
-        ],
-
-        villages: [
-            "Adiala",
-            "Chakri",
-            "Kahuta",
-            "Koral",
-            "Mandra"
-        ],
-
-        places: [
-            "Raja Bazaar",
-            "Ayub Park",
-            "Saddar",
-            "Rawalpindi Railway Station",
-            "Liaquat Bagh"
-        ]
-    },
-
-    {
-        name: "Faisalabad",
-        emoji: "🏭",
-        price: 1100,
-        mapSize: "230 MB",
-
-        areas: [
-            "Faisalabad City",
-            "D Ground",
-            "Peoples Colony",
-            "Samanabad",
-            "Jaranwala Road",
-            "Sargodha Road"
-        ],
-
-        villages: [
-            "Chak Jhumra",
-            "Jaranwala",
-            "Samundri",
-            "Tandlianwala",
-            "Khurrarianwala"
-        ],
-
-        places: [
-            "Clock Tower",
-            "Jinnah Garden",
-            "D Ground",
-            "Lyallpur Museum",
-            "Gumti"
-        ]
-    },
-
-    {
-        name: "Multan",
-        emoji: "🕌",
-        price: 1000,
-        mapSize: "220 MB",
-
-        areas: [
-            "Multan City",
-            "Cantt",
-            "Bosan Road",
-            "Gulgasht",
-            "Mumtazabad",
-            "Shah Rukn-e-Alam"
-        ],
-
-        villages: [
-            "Shujabad",
-            "Jalalpur Pirwala",
-            "Qadirpur Ran",
-            "Muzaffarabad",
-            "Sher Shah"
-        ],
-
-        places: [
-            "Ghanta Ghar",
-            "Shrine of Shah Rukn-e-Alam",
-            "Multan Fort",
-            "Hussain Agahi",
-            "Bahauddin Zakariya Shrine"
-        ]
-    },
-
-    {
-        name: "Peshawar",
-        emoji: "🏔️",
-        price: 1300,
-        mapSize: "250 MB",
-
-        areas: [
-            "Peshawar City",
-            "University Town",
-            "Hayatabad",
-            "Saddar",
-            "Board Bazaar",
-            "Ring Road"
-        ],
-
-        villages: [
-            "Chamkani",
-            "Badaber",
-            "Mathra",
-            "Regi",
-            "Nasir Bagh"
-        ],
-
-        places: [
-            "Qissa Khwani Bazaar",
-            "Bala Hisar Fort",
-            "Peshawar Museum",
-            "Saddar Bazaar",
-            "Mahabat Khan Mosque"
-        ]
-    },
-
-    {
-        name: "Quetta",
-        emoji: "⛰️",
-        price: 1400,
-        mapSize: "260 MB",
-
-        areas: [
-            "Quetta City",
-            "Jinnah Road",
-            "Satellite Town",
-            "Sariab Road",
-            "Brewery Road",
-            "Airport Road"
-        ],
-
-        villages: [
-            "Kuchlak",
-            "Hanna",
-            "Nawakilli",
-            "Mian Ghundi",
-            "Spearzen"
-        ],
-
-        places: [
-            "Hanna Lake",
-            "Quetta Cantonment",
-            "Quetta Railway Station",
-            "Askari Park",
-            "Ziarat Road"
-        ]
-    },
-
-    {
-        name: "Gujranwala",
-        emoji: "🏙️",
-        price: 1000,
-        mapSize: "210 MB",
-
-        areas: [
-            "Gujranwala City",
-            "Model Town",
-            "Satellite Town",
-            "GT Road",
-            "Civil Lines",
-            "Wapda Town"
-        ],
-
-        villages: [
-            "Aroop",
-            "Nowshera Virkan",
-            "Qila Didar Singh",
-            "Kamoke",
-            "Ali Pur Chatha"
-        ],
-
-        places: [
-            "Gujranwala Clock Tower",
-            "Jinnah Stadium",
-            "Gujranwala Railway Station",
-            "GT Road",
-            "Model Town"
-        ]
-    },
-
-    {
-        name: "Sialkot",
-        emoji: "🏏",
-        price: 1000,
-        mapSize: "210 MB",
-
-        areas: [
-            "Sialkot City",
-            "Cantt",
-            "Paris Road",
-            "Daska Road",
-            "Ugoki Road",
-            "Rangpura"
-        ],
-
-        villages: [
-            "Daska",
-            "Sambrial",
-            "Pasrur",
-            "Ugoki",
-            "Marala"
-        ],
-
-        places: [
-            "Iqbal Manzil",
-            "Sialkot Clock Tower",
-            "Sialkot Fort",
-            "Iqbal Stadium",
-            "Sialkot Railway Station"
-        ]
-    },
-
-
-    /* =====================================================
-       KAMALIA
-    ===================================================== */
-
-    {
-        name: "Kamalia",
-        emoji: "🌾",
-        price: 600,
-        mapSize: "180 MB",
-
-        areas: [
-            "Kamalia City",
-            "Bahlol Wala",
-            "Jandi Wala",
-            "Fazil Dewan",
-            "Dargahi Shah",
-            "Aadhi Wal",
-            "Baghai Wala",
-            "Noor Shah",
-            "Khursheed Abad",
-            "Islam Pura",
-            "Madina Abad",
-            "Ravi Side"
-        ],
-
-        villages: [
-
-            "Chak No. 712 GB",
-            "Chak No. 711 GB",
-            "Chak No. 710 GB",
-            "Chak No. 709 GB",
-            "Chak No. 708 GB",
-            "Chak No. 707 GB",
-            "Chak No. 706 GB",
-            "Chak No. 705 GB",
-
-            "Chak No. 713 GB",
-            "Chak No. 714 GB",
-            "Chak No. 715 GB",
-            "Chak No. 716 GB",
-            "Chak No. 717 GB",
-            "Chak No. 718 GB",
-
-            "Chak No. 724 GB",
-            "Chak No. 725 GB",
-            "Chak No. 728 GB",
-            "Chak No. 731 GB",
-            "Chak No. 734 GB",
-            "Chak No. 737 GB",
-            "Chak No. 739 GB",
-            "Chak No. 740 GB",
-            "Chak No. 741 GB",
-            "Chak No. 742 GB",
-            "Chak No. 746 GB",
-
-            "Tibbi Saydan",
-            "Bahlol Wala",
-            "Jandi Wala",
-            "Fazil Dewan",
-            "Dargahi Shah",
-            "Baghai Wala",
-            "Ravi Khokhar",
-            "Mouza Waghi",
-            "Mouza Mumber",
-            "Mouza Jaloka",
-            "Marthan Wala",
-            "Qadir Bux",
-            "Sheikh Burhan"
-        ],
-
-        places: [
-
-            "Old Kamalia City",
-            "Jahangiri Period Old Mosque",
-
-            "Shrine of Hazrat Baba Fazil Dewan",
-            "Dargahi Shah",
-            "Dholar Sharif",
-            "Qadir Bakhsh Sharif",
-
-            "Jinnah Park",
-            "Fazal Dewan Jinnah Park",
-            "Zeeshan Colony Park",
-
-            "Kamalia Railway Station",
-            "Kamalia General Bus Stand",
-
-            "Main Kalma Chowk",
-            "Jhakkar Mor Chowk",
-            "Eid Gah Chowk",
-            "Sarfaraz Mor Chowk",
-
-            "Ravi Side",
-            "Toba Chichawatni Road",
-            "Jhakar Kamalia Road"
-        ]
-    }
+    "Lahore",
+    "Karachi",
+    "Islamabad",
+    "Rawalpindi",
+    "Faisalabad",
+    "Multan",
+    "Peshawar",
+    "Quetta",
+    "Gujranwala",
+    "Sialkot",
+    "Kamalia"
 ];
 
 
-/* =========================================================
-   SAVE PLAYER
-========================================================= */
+const kamaliaVillages = [
+    "Kamalia City",
+    "Chak No. 712 GB",
+    "Chak No. 711 GB",
+    "Chak No. 718 GB",
+    "Chak No. 728 GB",
+    "Chak No. 740 GB",
+    "Chak No. 741 GB",
+    "Chak No. 742 GB",
+    "Bahlol Wala",
+    "Jandi Wala",
+    "Fazil Dewan",
+    "Dargahi Shah"
+];
 
-function savePlayer() {
-    localStorage.setItem(
-        "pakBusPlayer",
-        JSON.stringify(player)
+
+/* =========================
+   THREE.JS VARIABLES
+========================= */
+
+let scene;
+let camera;
+let renderer;
+
+let bus;
+
+let road;
+
+let speed = 0;
+
+let busX = 0;
+
+let acceleration = 0;
+
+let steering = 0;
+
+let gameRunning = false;
+
+let city = "Kamalia";
+
+let destination = "Kamalia City";
+
+let money = 5000;
+
+let fuel = 100;
+
+
+/* =========================
+   START GAME
+========================= */
+
+function startGame() {
+
+    document.getElementById("mainMenu")
+        .classList.add("hidden");
+
+    document.getElementById("cityMenu")
+        .classList.add("hidden");
+
+    document.getElementById("gameUI")
+        .classList.remove("hidden");
+
+
+    city = "Kamalia";
+
+    destination = "Kamalia City";
+
+    document.getElementById("currentCity")
+        .innerText = city;
+
+    document.getElementById("destination")
+        .innerText = destination;
+
+
+    init3D();
+
+    gameRunning = true;
+
+    animate();
+}
+
+
+/* =========================
+   3D INITIALIZATION
+========================= */
+
+function init3D() {
+
+    const container =
+        document.getElementById("threeContainer");
+
+
+    container.innerHTML = "";
+
+
+    scene =
+        new THREE.Scene();
+
+
+    scene.background =
+        new THREE.Color(0x87b7d9);
+
+
+    /* CAMERA */
+
+    camera =
+        new THREE.PerspectiveCamera(
+            65,
+            window.innerWidth /
+            window.innerHeight,
+            0.1,
+            1000
+        );
+
+
+    camera.position.set(
+        0,
+        5,
+        11
+    );
+
+
+    /* RENDERER */
+
+    renderer =
+        new THREE.WebGLRenderer({
+            antialias: true
+        });
+
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+
+    renderer.setPixelRatio(
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
+    );
+
+
+    renderer.shadowMap.enabled = true;
+
+
+    container.appendChild(
+        renderer.domElement
+    );
+
+
+    /* LIGHT */
+
+    const ambient =
+        new THREE.AmbientLight(
+            0xffffff,
+            1.5
+        );
+
+    scene.add(ambient);
+
+
+    const sun =
+        new THREE.DirectionalLight(
+            0xffffff,
+            2
+        );
+
+    sun.position.set(
+        30,
+        50,
+        20
+    );
+
+    sun.castShadow = true;
+
+    scene.add(sun);
+
+
+    createWorld();
+
+    createBus();
+
+    createTrees();
+
+    createBuildings();
+
+    createTraffic();
+
+
+    window.addEventListener(
+        "resize",
+        resizeGame
     );
 }
 
 
-/* =========================================================
-   UPDATE MENU
-========================================================= */
+/* =========================
+   WORLD
+========================= */
 
-function updatePlayerUI() {
+function createWorld() {
 
-    const money = document.getElementById("menuMoney");
-    const level = document.getElementById("menuLevel");
-    const xp = document.getElementById("menuXP");
+    /* GRASS */
 
-    if (money) money.innerText = player.money;
-    if (level) level.innerText = player.level;
-    if (xp) xp.innerText = player.xp;
-}
+    const grassGeometry =
+        new THREE.PlaneGeometry(
+            500,
+            500
+        );
+
+    const grassMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x3c713b
+        });
 
 
-/* =========================================================
-   HIDE ALL SCREENS
-========================================================= */
+    const grass =
+        new THREE.Mesh(
+            grassGeometry,
+            grassMaterial
+        );
 
-function hideScreens() {
 
-    const screens = [
-        "menu",
-        "modeScreen",
-        "mapScreen",
-        "game"
-    ];
+    grass.rotation.x =
+        -Math.PI / 2;
 
-    screens.forEach(id => {
 
-        const element = document.getElementById(id);
+    grass.position.y =
+        -0.1;
 
-        if (element) {
-            element.style.display = "none";
-        }
 
+    grass.receiveShadow = true;
+
+    scene.add(grass);
+
+
+    /* ROAD */
+
+    const roadGeometry =
+        new THREE.PlaneGeometry(
+            14,
+            500
+        );
+
+
+    const roadMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x292929
+        });
+
+
+    road =
+        new THREE.Mesh(
+            roadGeometry,
+            roadMaterial
+        );
+
+
+    road.rotation.x =
+        -Math.PI / 2;
+
+
+    road.position.y =
+        0;
+
+
+    road.receiveShadow = true;
+
+    scene.add(road);
+
+
+    /* ROAD LINES */
+
+    for (
+        let z = -240;
+        z < 250;
+        z += 12
+    ) {
+
+        const lineGeometry =
+            new THREE.BoxGeometry(
+                0.3,
+                0.03,
+                6
+            );
+
+
+        const lineMaterial =
+            new THREE.MeshStandardMaterial({
+                color: 0xffffff
+            });
+
+
+        const line =
+            new THREE.Mesh(
+                lineGeometry,
+                lineMaterial
+            );
+
+
+        line.position.set(
+            0,
+            0.03,
+            z
+        );
+
+
+        scene.add(line);
+    }
+
+
+    /* SIDE LINES */
+
+    [-6.5, 6.5].forEach(x => {
+
+        const lineGeometry =
+            new THREE.BoxGeometry(
+                0.15,
+                0.05,
+                500
+            );
+
+
+        const lineMaterial =
+            new THREE.MeshStandardMaterial({
+                color: 0xffd83d
+            });
+
+
+        const line =
+            new THREE.Mesh(
+                lineGeometry,
+                lineMaterial
+            );
+
+
+        line.position.set(
+            x,
+            0.05,
+            0
+        );
+
+
+        scene.add(line);
     });
 }
 
 
-/* =========================================================
-   OPEN MODE
-========================================================= */
+/* =========================
+   BUS
+========================= */
 
-function openMode(mode) {
+function createBus() {
 
-    currentMode = mode;
+    bus =
+        new THREE.Group();
 
-    hideScreens();
 
-    const screen = document.getElementById("modeScreen");
+    /* BODY */
 
-    if (!screen) return;
-
-    screen.style.display = "block";
-
-    const title = document.getElementById("modeTitle");
-    const description = document.getElementById("modeDescription");
-    const content = document.getElementById("modeContent");
-
-    if (!content) return;
-
-    content.innerHTML = "";
-
-    if (mode === "free") {
-
-        if (title) title.innerText = "🛣️ FREE MODE";
-
-        if (description) {
-            description.innerText =
-                "City select karo aur apni marzi se drive karo.";
-        }
-
-        showCities(content);
-    }
-
-
-    else if (mode === "career") {
-
-        if (title) title.innerText = "🏆 CAREER MODE";
-
-        if (description) {
-            description.innerText =
-                "Missions complete karo aur money + XP earn karo.";
-        }
-
-        showCareer(content);
-    }
-
-
-    else if (mode === "tour") {
-
-        if (title) title.innerText = "🌍 TOUR MODE";
-
-        if (description) {
-            description.innerText =
-                "Downloaded cities ke darmiyan tour karo.";
-        }
-
-        showTour(content);
-    }
-
-}
-
-
-/* =========================================================
-   SHOW CITIES
-========================================================= */
-
-function showCities(container) {
-
-    container.innerHTML = `
-        <h2>🇵🇰 Pakistan Cities</h2>
-
-        <p style="margin-bottom:20px;">
-            City select karein:
-        </p>
-
-        <div class="city-grid">
-
-            ${cities.map((city, index) => {
-
-                const downloaded =
-                    player.downloadedMaps.includes(city.name);
-
-                return `
-
-                    <div
-                        class="city-card"
-                        onclick="selectCity(${index})"
-                    >
-
-                        <div style="font-size:40px;">
-                            ${city.emoji}
-                        </div>
-
-                        <h3>
-                            ${city.name}
-                        </h3>
-
-                        <p>
-                            ${city.mapSize}
-                        </p>
-
-                        <small>
-                            ${
-                                downloaded
-                                ? "✅ Downloaded"
-                                : "🔒 Locked"
-                            }
-                        </small>
-
-                    </div>
-
-                `;
-
-            }).join("")}
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   SELECT CITY
-========================================================= */
-
-function selectCity(index) {
-
-    const city = cities[index];
-
-    if (!city) return;
-
-    currentCity = city.name;
-
-    const content =
-        document.getElementById("modeContent");
-
-    if (!content) return;
-
-    content.innerHTML = `
-
-        <button
-            class="back"
-            onclick="showCities(document.getElementById('modeContent'))"
-        >
-            ⬅ Back to Cities
-        </button>
-
-        <h2>
-            ${city.emoji} ${city.name}
-        </h2>
-
-        <div class="city-selection">
-
-            <button
-                onclick="showAreas(${index})"
-            >
-                🏙️ AREAS
-            </button>
-
-            <button
-                onclick="showVillages(${index})"
-            >
-                🌾 VILLAGES / CHAKS
-            </button>
-
-            <button
-                onclick="showPlaces(${index})"
-            >
-                📍 FAMOUS PLACES
-            </button>
-
-        </div>
-
-    `;
-}
-
-
-/* =========================================================
-   SHOW AREAS
-========================================================= */
-
-function showAreas(index) {
-
-    const city = cities[index];
-
-    const content =
-        document.getElementById("modeContent");
-
-    content.innerHTML = `
-
-        <button
-            class="back"
-            onclick="selectCity(${index})"
-        >
-            ⬅ Back
-        </button>
-
-        <h2>
-            🏙️ ${city.name} Areas
-        </h2>
-
-        <div class="city-grid">
-
-            ${city.areas.map((area, i) => `
-
-                <div
-                    class="city-card"
-                    onclick="startRoute('${city.name}', '${area}')"
-                >
-
-                    <h3>
-                        ${i + 1}. ${area}
-                    </h3>
-
-                    <p>
-                        🚍 Start Route
-                    </p>
-
-                </div>
-
-            `).join("")}
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   SHOW VILLAGES
-========================================================= */
-
-function showVillages(index) {
-
-    const city = cities[index];
-
-    const content =
-        document.getElementById("modeContent");
-
-    content.innerHTML = `
-
-        <button
-            class="back"
-            onclick="selectCity(${index})"
-        >
-            ⬅ Back
-        </button>
-
-        <h2>
-            🌾 ${city.name} Villages / Chaks
-        </h2>
-
-        <p>
-            Rural areas aur villages:
-        </p>
-
-        <div class="city-grid">
-
-            ${city.villages.map((village, i) => `
-
-                <div
-                    class="city-card"
-                    onclick="startRoute('${city.name}', '${village}')"
-                >
-
-                    <h3>
-                        ${i + 1}. ${village}
-                    </h3>
-
-                    <p>
-                        🚌 Drive Here
-                    </p>
-
-                </div>
-
-            `).join("")}
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   SHOW FAMOUS PLACES
-========================================================= */
-
-function showPlaces(index) {
-
-    const city = cities[index];
-
-    const content =
-        document.getElementById("modeContent");
-
-    content.innerHTML = `
-
-        <button
-            class="back"
-            onclick="selectCity(${index})"
-        >
-            ⬅ Back
-        </button>
-
-        <h2>
-            📍 ${city.name} Famous Places
-        </h2>
-
-        <div class="city-grid">
-
-            ${city.places.map((place, i) => `
-
-                <div
-                    class="city-card"
-                    onclick="startRoute('${city.name}', '${place}')"
-                >
-
-                    <h3>
-                        ${i + 1}. ${place}
-                    </h3>
-
-                    <p>
-                        🚍 Visit
-                    </p>
-
-                </div>
-
-            `).join("")}
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   CAREER MODE
-========================================================= */
-
-function showCareer(container) {
-
-    container.innerHTML = `
-
-        <div class="career-card">
-
-            <h2>
-                🚌 Career Mission
-            </h2>
-
-            <h3>
-                Kamalia Local Route
-            </h3>
-
-            <p>
-                Kamalia City se village route complete karo.
-            </p>
-
-            <p>
-                💰 Reward: Rs. 1,000
-            </p>
-
-            <p>
-                ⭐ XP: 250
-            </p>
-
-            <button
-                onclick="startRoute('Kamalia', 'Chak No. 712 GB')"
-            >
-                🚍 START MISSION
-            </button>
-
-        </div>
-
-        <div class="career-card">
-
-            <h3>
-                🛣️ Lahore → Kamalia
-            </h3>
-
-            <p>
-                Long distance route
-            </p>
-
-            <p>
-                💰 Reward: Rs. 2,000
-            </p>
-
-            <button
-                onclick="startRoute('Kamalia', 'Kamalia City')"
-            >
-                🚍 START ROUTE
-            </button>
-
-        </div>
-
-    `;
-}
-
-
-/* =========================================================
-   TOUR MODE
-========================================================= */
-
-function showTour(container) {
-
-    const downloaded =
-        cities.filter(city =>
-            player.downloadedMaps.includes(city.name)
+    const bodyGeometry =
+        new THREE.BoxGeometry(
+            3,
+            2.5,
+            6
         );
 
-    if (downloaded.length < 2) {
 
-        container.innerHTML = `
+    const bodyMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0x1c8c62
+        });
 
-            <h2>
-                🌍 TOUR MODE
-            </h2>
 
-            <p>
-                Tour Mode ke liye kam az kam
-                2 cities download karo.
-            </p>
+    const body =
+        new THREE.Mesh(
+            bodyGeometry,
+            bodyMaterial
+        );
 
-            <button
-                onclick="openMapDownload()"
-            >
-                🗺️ DOWNLOAD MAPS
-            </button>
 
-        `;
+    body.position.y =
+        1.7;
 
-        return;
+
+    body.castShadow = true;
+
+    bus.add(body);
+
+
+    /* UPPER BODY */
+
+    const upperGeometry =
+        new THREE.BoxGeometry(
+            2.8,
+            1.6,
+            4.8
+        );
+
+
+    const upperMaterial =
+        new THREE.MeshStandardMaterial({
+            color: 0xe7e7e7
+        });
+
+
+    const upper =
+        new THREE.Mesh(
+            upperGeometry,
+            upperMaterial
+        );
+
+
+    upper.position.y =
+        3.2;
+
+
+    upper.castShadow = true;
+
+    bus.add(upper);
+
+
+    /* WINDOWS */
+
+    for (
+        let z = -1.8;
+        z <= 1.8;
+        z += 1.2
+    ) {
+
+        const windowGeometry =
+            new THREE.BoxGeometry(
+                2.86,
+                0.8,
+                0.75
+            );
+
+
+        const windowMaterial =
+            new THREE.MeshStandardMaterial({
+                color: 0x173847,
+                metalness: 0.2,
+                roughness: 0.2
+            });
+
+
+        const window =
+            new THREE.Mesh(
+                windowGeometry,
+                windowMaterial
+            );
+
+
+        window.position.set(
+            0,
+            3.35,
+            z
+        );
+
+
+        bus.add(window);
     }
 
 
-    container.innerHTML = `
+    /* WHEELS */
 
-        <h2>
-            🌍 Available Tour Cities
-        </h2>
+    createWheel(-1.65, 1.8);
+    createWheel(1.65, 1.8);
 
-        <div class="city-grid">
+    createWheel(-1.65, -1.8);
+    createWheel(1.65, -1.8);
 
-            ${downloaded.map((city, index) => `
 
-                <div
-                    class="city-card"
-                    onclick="startRoute('${city.name}', 'Tour Route')"
-                >
+    bus.position.set(
+        0,
+        0,
+        8
+    );
 
-                    <div style="font-size:40px;">
-                        ${city.emoji}
-                    </div>
 
-                    <h3>
-                        ${city.name}
-                    </h3>
-
-                    <p>
-                        🚍 Start Tour
-                    </p>
-
-                </div>
-
-            `).join("")}
-
-        </div>
-    `;
+    scene.add(bus);
 }
 
 
-/* =========================================================
-   MAP DOWNLOAD
-========================================================= */
+/* =========================
+   WHEEL
+========================= */
 
-function openMapDownload() {
+function createWheel(x, z) {
 
-    hideScreens();
+    const geometry =
+        new THREE.CylinderGeometry(
+            0.65,
+            0.65,
+            0.45,
+            24
+        );
 
-    const screen =
-        document.getElementById("mapScreen");
 
-    if (!screen) return;
+    const material =
+        new THREE.MeshStandardMaterial({
+            color: 0x111111
+        });
 
-    screen.style.display = "block";
+
+    const wheel =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+
+    wheel.rotation.z =
+        Math.PI / 2;
+
+
+    wheel.position.set(
+        x,
+        0.7,
+        z
+    );
+
+
+    wheel.castShadow = true;
+
+    bus.add(wheel);
+}
+
+
+/* =========================
+   TREES
+========================= */
+
+function createTrees() {
+
+    for (
+        let z = -220;
+        z < 230;
+        z += 18
+    ) {
+
+        createTree(-11, z);
+
+        createTree(11, z + 8);
+    }
+}
+
+
+function createTree(x, z) {
+
+    const tree =
+        new THREE.Group();
+
+
+    const trunk =
+        new THREE.Mesh(
+
+            new THREE.CylinderGeometry(
+                0.25,
+                0.35,
+                2,
+                8
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x68421f
+            })
+
+        );
+
+
+    trunk.position.y =
+        1;
+
+
+    tree.add(trunk);
+
+
+    const leaves =
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                1.5,
+                12,
+                12
+            ),
+
+            new THREE.MeshStandardMaterial({
+                color: 0x216b35
+            })
+
+        );
+
+
+    leaves.position.y =
+        2.7;
+
+
+    tree.add(leaves);
+
+
+    tree.position.set(
+        x,
+        0,
+        z
+    );
+
+
+    scene.add(tree);
+}
+
+
+/* =========================
+   BUILDINGS
+========================= */
+
+function createBuildings() {
+
+    for (
+        let z = -200;
+        z < 220;
+        z += 35
+    ) {
+
+        createBuilding(
+            -14,
+            z
+        );
+
+        createBuilding(
+            14,
+            z + 15
+        );
+    }
+}
+
+
+function createBuilding(x, z) {
+
+    const height =
+        3 + Math.random() * 5;
+
+
+    const geometry =
+        new THREE.BoxGeometry(
+            5,
+            height,
+            6
+        );
+
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:
+                Math.random() > 0.5
+                    ? 0xb99c7c
+                    : 0x9d9d9d
+        });
+
+
+    const building =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+
+    building.position.set(
+        x,
+        height / 2,
+        z
+    );
+
+
+    building.castShadow = true;
+
+    scene.add(building);
+}
+
+
+/* =========================
+   TRAFFIC
+========================= */
+
+function createTraffic() {
+
+    for (
+        let i = 0;
+        i < 7;
+        i++
+    ) {
+
+        const car =
+            new THREE.Mesh(
+
+                new THREE.BoxGeometry(
+                    1.8,
+                    1,
+                    3.5
+                ),
+
+                new THREE.MeshStandardMaterial({
+                    color:
+                        Math.random() *
+                        0xffffff
+                })
+
+            );
+
+
+        car.position.set(
+
+            Math.random() > .5
+                ? -3
+                : 3,
+
+            .6,
+
+            -30 -
+            i * 35
+
+        );
+
+
+        scene.add(car);
+    }
+}
+
+
+/* =========================
+   GAME LOOP
+========================= */
+
+function animate() {
+
+    if (!gameRunning) return;
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    /* ACCELERATION */
+
+    if (acceleration > 0) {
+
+        speed += 0.08;
+
+    } else {
+
+        speed -= 0.03;
+    }
+
+
+    speed =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                speed
+            )
+        );
+
+
+    /* STEERING */
+
+    busX += steering *
+        (speed / 80);
+
+
+    busX =
+        Math.max(
+            -4.5,
+            Math.min(
+                4.5,
+                busX
+            )
+        );
+
+
+    bus.position.x =
+        busX;
+
+
+    /* FORWARD CAMERA */
+
+    camera.position.x =
+        bus.position.x;
+
+
+    camera.position.y =
+        5.5;
+
+
+    camera.position.z =
+        12;
+
+
+    camera.lookAt(
+        bus.position.x,
+        2,
+        bus.position.z - 20
+    );
+
+
+    /* MOVE WORLD */
+
+    scene.traverse(
+        object => {
+
+            if (
+                object !== bus &&
+                object.userData &&
+                object.userData.movable
+            ) {
+
+                object.position.z +=
+                    speed * 0.003;
+
+            }
+
+        }
+    );
+
+
+    /* FUEL */
+
+    if (speed > 0) {
+
+        fuel -=
+            0.001;
+
+        fuel =
+            Math.max(
+                0,
+                fuel
+            );
+    }
+
+
+    updateHUD();
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+
+/* =========================
+   HUD
+========================= */
+
+function updateHUD() {
+
+    document.getElementById(
+        "speed"
+    ).innerText =
+        Math.round(speed);
+
+
+    document.getElementById(
+        "fuel"
+    ).innerText =
+        Math.round(fuel);
+
+
+    document.getElementById(
+        "money"
+    ).innerText =
+        money;
+}
+
+
+/* =========================
+   GAS
+========================= */
+
+function gasDown() {
+
+    acceleration = 1;
+}
+
+
+function gasUp() {
+
+    acceleration = 0;
+}
+
+
+/* =========================
+   BRAKE
+========================= */
+
+function brake() {
+
+    speed -= 2;
+
+    speed =
+        Math.max(
+            0,
+            speed
+        );
+}
+
+
+/* =========================
+   STEERING
+========================= */
+
+function turnLeft() {
+
+    steering = -1;
+}
+
+
+function turnRight() {
+
+    steering = 1;
+}
+
+
+function stopSteering() {
+
+    steering = 0;
+}
+
+
+/* =========================
+   HORN
+========================= */
+
+function horn() {
+
+    console.log(
+        "📯 HORN!"
+    );
+}
+
+
+/* =========================
+   KEYBOARD
+========================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "ArrowLeft"
+        ) {
+
+            turnLeft();
+
+        }
+
+        if (
+            event.key === "ArrowRight"
+        ) {
+
+            turnRight();
+
+        }
+
+        if (
+            event.key === "ArrowUp"
+        ) {
+
+            gasDown();
+
+        }
+
+        if (
+            event.key === "ArrowDown"
+        ) {
+
+            brake();
+
+        }
+
+        if (
+            event.code === "Space"
+        ) {
+
+            horn();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        if (
+            event.key === "ArrowLeft" ||
+            event.key === "ArrowRight"
+        ) {
+
+            stopSteering();
+
+        }
+
+        if (
+            event.key === "ArrowUp"
+        ) {
+
+            gasUp();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   MOBILE BUTTONS
+========================= */
+
+function setupControls() {
+
+    const left =
+        document.getElementById(
+            "leftBtn"
+        );
+
+    const right =
+        document.getElementById(
+            "rightBtn"
+        );
+
+    const gas =
+        document.getElementById(
+            "gasBtn"
+        );
+
+    const brakeBtn =
+        document.getElementById(
+            "brakeBtn"
+        );
+
+    const hornBtn =
+        document.getElementById(
+            "hornBtn"
+        );
+
+
+    left.addEventListener(
+        "pointerdown",
+        turnLeft
+    );
+
+    left.addEventListener(
+        "pointerup",
+        stopSteering
+    );
+
+    left.addEventListener(
+        "pointerleave",
+        stopSteering
+    );
+
+
+    right.addEventListener(
+        "pointerdown",
+        turnRight
+    );
+
+    right.addEventListener(
+        "pointerup",
+        stopSteering
+    );
+
+    right.addEventListener(
+        "pointerleave",
+        stopSteering
+    );
+
+
+    gas.addEventListener(
+        "pointerdown",
+        gasDown
+    );
+
+    gas.addEventListener(
+        "pointerup",
+        gasUp
+    );
+
+    gas.addEventListener(
+        "pointerleave",
+        gasUp
+    );
+
+
+    brakeBtn.addEventListener(
+        "pointerdown",
+        brake
+    );
+
+
+    hornBtn.addEventListener(
+        "click",
+        horn
+    );
+}
+
+
+/* =========================
+   CITY MENU
+========================= */
+
+function openCityMenu() {
+
+    document.getElementById(
+        "mainMenu"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "cityMenu"
+    ).classList.remove("hidden");
+
 
     const list =
-        document.getElementById("mapList");
+        document.getElementById(
+            "cityList"
+        );
 
-    if (!list) return;
 
-    list.innerHTML = `
+    list.innerHTML = "";
 
-        <h2>
-            🗺️ Pakistan Map Download
-        </h2>
 
-        <p>
-            Virtual money se maps unlock karein.
-        </p>
+    cities.forEach(
+        (name, index) => {
 
-        ${cities.map((city, index) => {
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-            const downloaded =
-                player.downloadedMaps.includes(city.name);
 
-            return `
+            card.className =
+                "city-card";
 
-                <div class="map-card">
 
-                    <h3>
-                        ${city.emoji}
-                        ${city.name}
-                    </h3>
+            card.innerHTML = `
 
-                    <p>
-                        📦 Size: ${city.mapSize}
-                    </p>
+                <span class="city-number">
+                    ${String(index + 1).padStart(2, "0")}
+                </span>
 
-                    <p>
-                        💰 Price: Rs. ${city.price}
-                    </p>
+                <span class="city-name">
+                    🇵🇰 ${name}
+                </span>
 
-                    ${
-                        downloaded
-
-                        ? `
-                            <button disabled>
-                                ✅ DOWNLOADED
-                            </button>
-                        `
-
-                        : `
-                            <button
-                                onclick="downloadMap(${index})"
-                            >
-                                ⬇️ DOWNLOAD
-                            </button>
-                        `
-                    }
-
-                </div>
+                <span class="city-arrow">
+                    ➜
+                </span>
 
             `;
 
-        }).join("")}
 
-    `;
-}
+            card.onclick = () => {
 
+                city = name;
 
-/* =========================================================
-   DOWNLOAD MAP
-========================================================= */
+                destination =
+                    name === "Kamalia"
+                        ? "Kamalia City"
+                        : name + " City";
 
-function downloadMap(index) {
+                document.getElementById(
+                    "currentCity"
+                ).innerText = city;
 
-    const city = cities[index];
+                document.getElementById(
+                    "destination"
+                ).innerText =
+                    destination;
 
-    if (!city) return;
+                startGame();
 
-    if (player.downloadedMaps.includes(city.name)) {
-
-        alert("Map already downloaded!");
-
-        return;
-    }
-
-
-    if (player.money < city.price) {
-
-        alert(
-            "❌ Paise kam hain!\n\n" +
-            "Required: Rs. " + city.price
-        );
-
-        return;
-    }
+            };
 
 
-    player.money -= city.price;
+            list.appendChild(
+                card
+            );
 
-    player.downloadedMaps.push(city.name);
-
-    savePlayer();
-
-    updatePlayerUI();
-
-    alert(
-        "✅ " +
-        city.name +
-        " map unlocked!"
+        }
     );
-
-    openMapDownload();
 }
 
 
-/* =========================================================
-   START ROUTE
-========================================================= */
-
-function startRoute(city, destination) {
-
-    currentCity = city;
-    currentDestination = destination;
-
-    hideScreens();
-
-    const game =
-        document.getElementById("game");
-
-    if (!game) return;
-
-    game.style.display = "block";
-
-
-    const gameCity =
-        document.getElementById("gameCity");
-
-    const gameMode =
-        document.getElementById("gameMode");
-
-    const gameMoney =
-        document.getElementById("gameMoney");
-
-    const gameXP =
-        document.getElementById("gameXP");
-
-    const fuel =
-        document.getElementById("fuel");
-
-
-    if (gameCity) {
-
-        gameCity.innerText =
-            city + " → " + destination;
-
-    }
-
-
-    if (gameMode) {
-
-        gameMode.innerText =
-            currentMode.toUpperCase();
-
-    }
-
-
-    if (gameMoney) {
-
-        gameMoney.innerText =
-            player.money;
-
-    }
-
-
-    if (gameXP) {
-
-        gameXP.innerText =
-            player.xp;
-
-    }
-
-
-    if (fuel) {
-
-        fuel.innerText =
-            player.fuel + "%";
-
-    }
-
-
-    const bus =
-        document.getElementById("bus");
-
-    if (bus) {
-
-        bus.style.left = "50%";
-
-    }
-
-}
-
-
-/* =========================================================
-   GAME CONTROLS
-========================================================= */
-
-document.addEventListener("keydown", function(event) {
-
-    const bus =
-        document.getElementById("bus");
-
-    if (!bus) return;
-
-
-    if (
-        document.getElementById("game") &&
-        document.getElementById("game").style.display !== "none"
-    ) {
-
-        let left =
-            parseFloat(bus.style.left) || 50;
-
-
-        if (event.key === "ArrowLeft") {
-
-            left -= 3;
-
-        }
-
-
-        if (event.key === "ArrowRight") {
-
-            left += 3;
-
-        }
-
-
-        if (event.key === " ") {
-
-            event.preventDefault();
-
-            useBrake();
-
-        }
-
-
-        left =
-            Math.max(5, Math.min(95, left));
-
-        bus.style.left =
-            left + "%";
-
-    }
-
-});
-
-
-/* =========================================================
-   BRAKE
-========================================================= */
-
-function useBrake() {
-
-    const bus =
-        document.getElementById("bus");
-
-    if (!bus) return;
-
-    bus.style.transform =
-        "translateX(-50%) scale(0.95)";
-
-    setTimeout(() => {
-
-        bus.style.transform =
-            "translateX(-50%) scale(1)";
-
-    }, 150);
-
-}
-
-
-/* =========================================================
-   COMPLETE ROUTE
-========================================================= */
-
-function completeRoute() {
-
-    const reward = 500;
-    const gainedXP = 100;
-
-    player.money += reward;
-    player.xp += gainedXP;
-
-    player.fuel =
-        Math.max(0, player.fuel - 10);
-
-
-    if (player.xp >= player.level * 500) {
-
-        player.level++;
-
-        alert(
-            "🎉 LEVEL UP!\n\n" +
-            "New Level: " +
-            player.level
-        );
-
-    }
-
-
-    savePlayer();
-
-    updatePlayerUI();
-
-    alert(
-        "🏁 Route Complete!\n\n" +
-        "💰 +Rs. " + reward +
-        "\n⭐ +" + gainedXP + " XP"
-    );
-
-}
-
-
-/* =========================================================
-   BACK TO MENU
-========================================================= */
+/* =========================
+   BACK
+========================= */
 
 function backToMenu() {
 
-    hideScreens();
+    document.getElementById(
+        "cityMenu"
+    ).classList.add("hidden");
 
-    const menu =
-        document.getElementById("menu");
 
-    if (menu) {
-
-        menu.style.display = "block";
-
-    }
-
-    updatePlayerUI();
+    document.getElementById(
+        "mainMenu"
+    ).classList.remove("hidden");
 }
 
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
+/* =========================
+   EXIT
+========================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
+function exitGame() {
 
-        updatePlayerUI();
+    gameRunning = false;
 
-        hideScreens();
 
-        const menu =
-            document.getElementById("menu");
+    document.getElementById(
+        "gameUI"
+    ).classList.add("hidden");
 
-        if (menu) {
 
-            menu.style.display = "block";
+    document.getElementById(
+        "mainMenu"
+    ).classList.remove("hidden");
+}
 
-        }
 
-    }
+/* =========================
+   COMING SOON
+========================= */
+
+function showComingSoon(name) {
+
+    alert(
+        name +
+        "\n\n🚧 Is feature ko next update mein add karenge."
+    );
+}
+
+
+/* =========================
+   RESIZE
+========================= */
+
+function resizeGame() {
+
+    if (!camera || !renderer)
+        return;
+
+
+    camera.aspect =
+        window.innerWidth /
+        window.innerHeight;
+
+
+    camera.updateProjectionMatrix();
+
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+}
+
+
+/* =========================
+   INITIAL SETUP
+========================= */
+
+window.addEventListener(
+    "load",
+    setupControls
 );
