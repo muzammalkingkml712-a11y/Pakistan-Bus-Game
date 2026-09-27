@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Pakistan Bus Game 🇵🇰</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         MAIN MENU
+    ========================== -->
+
+    <div id="menu" class="screen">
+
+        <h1>🇵🇰 Pakistan Bus Game</h1>
+
+        <p class="subtitle">
+            Drive through the roads of Pakistan
+        </p>
+
+        <h2>Select City</h2>
+
+        <select id="citySelect">
+            <option value="Lahore">Lahore</option>
+            <option value="Karachi">Karachi</option>
+            <option value="Islamabad">Islamabad</option>
+            <option value="Rawalpindi">Rawalpindi</option>
+            <option value="Faisalabad">Faisalabad</option>
+            <option value="Multan">Multan</option>
+            <option value="Peshawar">Peshawar</option>
+            <option value="Quetta">Quetta</option>
+            <option value="Gujranwala">Gujranwala</option>
+            <option value="Sialkot">Sialkot</option>
+        </select>
+
+        <h2>Select Bus</h2>
+
+        <div class="bus-selection">
+
+            <button class="bus-btn" onclick="selectBus('Daewoo')">
+                🚌 Daewoo
+            </button>
+
+            <button class="bus-btn" onclick="selectBus('Green Bus')">
+                🚌 Green Bus
+            </button>
+
+            <button class="bus-btn" onclick="selectBus('Local Bus')">
+                🚌 Local Bus
+            </button>
+
+        </div>
+
+        <p id="selectedBus">
+            Selected Bus: None
+        </p>
+
+        <button class="start-btn" onclick="startGame()">
+            START GAME
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         GAME SCREEN
+    ========================== -->
+
+    <div id="game" class="screen hidden">
+
+        <div class="top-bar">
+
+            <div>
+                🏙️ City:
+                <span id="cityName">Lahore</span>
+            </div>
+
+            <div>
+                🚌 Bus:
+                <span id="busName">Bus</span>
+            </div>
+
+            <div>
+                ⭐ Score:
+                <span id="score">0</span>
+            </div>
+
+            <div>
+                👥 Passengers:
+                <span id="passengers">0</span>
+            </div>
+
+        </div>
+
+
+        <!-- ROAD -->
+
+        <div id="road">
+
+            <div class="road-line line1"></div>
+            <div class="road-line line2"></div>
+            <div class="road-line line3"></div>
+            <div class="road-line line4"></div>
+
+            <!-- Traffic -->
+
+            <div class="traffic traffic1">🚗</div>
+            <div class="traffic traffic2">🚙</div>
+
+            <!-- PLAYER BUS -->
+
+            <div id="playerBus">
+                🚌
+            </div>
+
+        </div>
+
+
+        <!-- CONTROLS -->
+
+        <div class="controls">
+
+            <button onclick="moveLeft()">
+                ◀ LEFT
+            </button>
+
+            <button onclick="stopBus()">
+                ⛔ BRAKE
+            </button>
+
+            <button onclick="moveRight()">
+                RIGHT ▶
+            </button>
+
+        </div>
+
+        <p class="keyboard">
+            Keyboard: ← → to move | Space to brake
+        </p>
+
+        <button class="back-btn" onclick="backToMenu()">
+            Back to Menu
+        </button>
+
+    </div>
+
+
+    <script src="game.js"></script>
+
+</body>
+</html>
